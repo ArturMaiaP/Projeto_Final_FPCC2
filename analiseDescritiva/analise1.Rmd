@@ -1,0 +1,110 @@
+---
+title: "descritiva"
+author: "Artur Maia"
+date: "02/07/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+#install.packages("pastecs")
+library(pastecs)
+#source(here::here("5-regressao/speed-dating"))
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+```
+
+```{r}
+dados = read_csv(here::here("data/questOnEcomm.csv"))
+
+glimpse(dados)
+```
+
+
+```{r}
+ncol(dados)
+
+dados.num = dados[,-c(1:9,30)]
+
+names(dados.num)[1] = "price_negociation"
+names(dados.num)[2] = "physical_contact"
+names(dados.num)[11] = "site_navigation_speed"
+names(dados.num)[4] = "credit_card_pay"
+names(dados.num)[5] = "new_product_curiosity"
+names(dados.num)[6] = "risk_credit_card"
+names(dados.num)[7] = "detailed_info"
+names(dados.num)[8] = "images_better_text"
+names(dados.num)[9] = "organization_speed"
+names(dados.num)[10] = "transaction_security"
+names(dados.num)[3] = "transaction_speed"
+names(dados.num)[12] = "acc_info"
+names(dados.num)[13] = "prod_price_comp"
+names(dados.num)[14] = "effec_shop_cart"
+names(dados.num)[15] = "brand_classif"
+names(dados.num)[16] = "others_opi"
+names(dados.num)[17] = "effec_search_mech"
+names(dados.num)[18] = "megastore_better_especialized"
+names(dados.num)[19] = "personal_info_privacy"
+names(dados.num)[20] = "relutance_credit_card"
+
+colnames(dados.num)
+
+
+shopping.behaviour = dados.num %>% select(acc_info, detailed_info, price_negociation, prod_price_comp, physical_contact, others_opi, megastore_better_especialized, credit_card_pay,new_product_curiosity)
+
+site.design = dados.num %>% select(site_navigation_speed, organization_speed, effec_search_mech, transaction_speed, effec_shop_cart, images_better_text, brand_classif)
+
+tech.issues = dados.num %>% select(transaction_security, personal_info_privacy, risk_credit_card,relutance_credit_card)
+
+```
+
+Médias e desvio padrão
+
+```{r}
+
+shopping.behaviour.descript = tibble(colnames(shopping.behaviour), round(colMeans(shopping.behaviour),2), round(unlist(lapply(shopping.behaviour[,], sd)), 2))
+names(shopping.behaviour.descript)[1] = "var"
+names(shopping.behaviour.descript)[2] = "media"
+names(shopping.behaviour.descript)[3] = "sd"
+
+shopping.behaviour.descript %>% arrange(-media)
+```
+
+
+```{r}
+
+site.design.descript = tibble(colnames(site.design), round(colMeans(site.design),2), round(unlist(lapply(site.design[,], sd)), 2))
+names(site.design.descript)[1] = "var"
+names(site.design.descript)[2] = "media"
+names(site.design.descript)[3] = "sd"
+
+site.design.descript%>% arrange(-media)
+```
+
+```{r}
+
+tech.issues.descript = tibble(colnames(tech.issues), round(colMeans(tech.issues),2), round(unlist(lapply(tech.issues[,], sd)), 2))
+names(tech.issues.descript)[1] = "var"
+names(tech.issues.descript)[2] = "media"
+names(tech.issues.descript)[3] = "sd"
+
+tech.issues.descript%>% arrange(-media)
+```
+
+
+```{r}
+
+all.descript = rbind(shopping.behaviour.descript, site.design.descript)
+all.descript = rbind(all.descript, tech.issues.descript)
+
+all.descript %>% arrange(-media)
+all.descript %>% pull(media) %>% mean()
+
+```
+
