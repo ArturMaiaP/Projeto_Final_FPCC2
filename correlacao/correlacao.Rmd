@@ -1,0 +1,86 @@
+---
+title: "correlacao"
+author: "Artur Maia"
+date: "03/07/2020"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+#install.packages("pastecs")
+library(pastecs)
+#source(here::here("5-regressao/speed-dating"))
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+```
+
+```{r}
+dados = read_csv(here::here("data/questOnEcomm.csv"))
+
+glimpse(dados)
+```
+
+
+```{r}
+
+ncol(dados)
+
+dados.num = dados[,-c(1:9,30)]
+
+names(dados.num)[1] = "price_negociation"
+names(dados.num)[2] = "physical_contact"
+names(dados.num)[11] = "site_navigation_speed"
+names(dados.num)[4] = "credit_card_pay"
+names(dados.num)[5] = "new_product_curiosity"
+names(dados.num)[6] = "risk_credit_card"
+names(dados.num)[7] = "detailed_info"
+names(dados.num)[8] = "images_better_text"
+names(dados.num)[9] = "organization_speed"
+names(dados.num)[10] = "transaction_security"
+names(dados.num)[3] = "transaction_speed"
+names(dados.num)[12] = "acc_info"
+names(dados.num)[13] = "prod_price_comp"
+names(dados.num)[14] = "effec_shop_cart"
+names(dados.num)[15] = "brand_classif"
+names(dados.num)[16] = "others_opi"
+names(dados.num)[17] = "effec_search_mech"
+names(dados.num)[18] = "megastore_better_especialized"
+names(dados.num)[19] = "personal_info_privacy"
+names(dados.num)[20] = "relutance_credit_card"
+
+colnames(dados.num)
+
+```
+
+
+```{r}
+
+cols_relev_names <- function(df){
+  media.geral = round(mean(colMeans(df)),2)
+  cols_relev = c()
+  for (coluna in colnames(df)){
+    temp = df %>% select(coluna) %>% pull() %>%mean()
+      
+    if (temp >= media.geral) {
+      cols_relev = c(cols_relev, coluna)
+    }
+  
+  }
+  return(cols_relev)
+}
+
+
+cols.relev = cols_relev_names(dados.num)
+
+dados.relev = dados.num %>% select(cols.relev)
+
+dados.relev
+
+```

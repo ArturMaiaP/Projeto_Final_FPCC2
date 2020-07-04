@@ -103,8 +103,10 @@ tech.issues.descript%>% arrange(-media)
 all.descript = rbind(shopping.behaviour.descript, site.design.descript)
 all.descript = rbind(all.descript, tech.issues.descript)
 
+round(mean(colMeans(dados.num)),2)
+
 all.descript %>% arrange(-media)
-all.descript %>% pull(media) %>% mean()
+
 
 ```
 
