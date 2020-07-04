@@ -10,7 +10,9 @@ output: html_document
 library(tidyverse)
 library(broom)
 library(modelr)
-#install.packages("pastecs")
+#install.packages("PerformanceAnalytics")
+library(PerformanceAnalytics)
+library(corrplot)
 library(pastecs)
 #source(here::here("5-regressao/speed-dating"))
 theme_set(theme_bw())
@@ -82,5 +84,66 @@ cols.relev = cols_relev_names(dados.num)
 dados.relev = dados.num %>% select(cols.relev)
 
 dados.relev
+
+```
+
+```{r}
+
+#for (coluna in colnames(dados.num)){
+#    print(dados.num %>% select(coluna) %>% pull() %>% shapiro.test())
+    
+#}
+print("Shapiro-will para avaliar se var detailed_info tem dist. normaç")
+shapiro.test(dados.num$detailed_info)
+shapiro.test(dados.num$acc_info)
+
+M<-round(cor(dados.num, method = "spearman"),2)
+M
+
+dados.corr.kendall_40 = dados.num %>% select(price_negociation,transaction_speed,new_product_curiosity,risk_credit_card,detailed_info,organization_speed,transaction_security,site_navigation_speed, acc_info, effec_shop_cart,others_opi, personal_info_privacy,relutance_credit_card)
+colnames(dados.corr.kendall) = c("Negociar Preço","Transações Eficientes","Compra por Curiosidade","Risco Cartão", "Detalhes Info.","Organização", "Transações Seguras","Navegação Objetiva", "Precisão Info.","Carrinho Compras", "Comentários", "Privacidade Info.", "Relutância Cartão")
+
+dados.corr.kendall_50 = dados.num %>% select(risk_credit_card, detailed_info, transaction_security, acc_info, others_opi,effec_search_mech, personal_info_privacy, relutance_credit_card)
+colnames(dados.corr.kendall_50) = c("Risco Cartão", "Detalhes Info.", "Transações Seguras", "Precisão Info.", "Comentários", "Busca Eficiente", "Privacidade Info.", "Relutância Cartão")
+
+dados.corr.spearman = dados.num %>% select(price_negociation,transaction_speed,new_product_curiosity,risk_credit_card,detailed_info, transaction_security,acc_info, others_opi, effec_search_mech, personal_info_privacy, relutance_credit_card)
+
+colnames(dados.corr.spearman) = c("Negociar Preço", "Transações Eficientes", "Compra por Curiosidade", "Risco Cartão","Detalhes Info.", "Transações Seguras", "Precisão Info.", "Comentários", "Busca Eficiente", "Privacidade Info.", "Relutância Cartão")
+
+dados.corr.spearman
+
+```
+
+Matriz de correlação para coeficiente de Kendall
+```{r}
+#trace("chart.Correlation",edit=TRUE)
+
+#chart.Correlation(dados.relev, histogram = TRUE)
+paleta <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200)
+
+pdf(file = "kendallCorr.pdf")
+
+corrplot(cor(dados.corr.kendall_50), method = "color", type = "lower", addCoef.col = "black",
+         tl.col = "blue", tl.srt = 25, col = paleta, tl.cex = 0.8, tl.offset = 0.8)
+
+dev.off()
+
+```
+
+
+Matriz de correlação para coeficiente de Spearman
+```{r}
+#trace("chart.Correlation",edit=TRUE)
+
+#chart.Correlation(dados.relev, histogram = TRUE)
+paleta <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200)
+
+plot.new()
+pdf(file = "spearmanCorr.pdf")
+
+corrplot(cor(dados.corr.spearman), method = "color", type = "lower", addCoef.col = "black",
+       tl.col = "blue", tl.srt = 25, col = paleta, tl.cex = 0.8, tl.offset = 0.8, number.cex = 0.6)
+
+dev.off()
 
 ```
