@@ -1,0 +1,92 @@
+---
+title: "compMean"
+author: "Artur Maia"
+date: "05/07/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+#install.packages("pastecs")
+library(pastecs)
+#source(here::here("5-regressao/speed-dating"))
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+```
+
+```{r}
+dados = read_csv(here::here("data/questOnEcomm.csv"))
+
+glimpse(dados)
+```
+
+
+```{r}
+ncol(dados)
+
+dados.num = dados[,-c(1:9,30)]
+
+names(dados.num)[1] = "price_negociation"
+names(dados.num)[2] = "physical_contact"
+names(dados.num)[11] = "site_navigation_speed"
+names(dados.num)[4] = "credit_card_pay"
+names(dados.num)[5] = "new_product_curiosity"
+names(dados.num)[6] = "risk_credit_card"
+names(dados.num)[7] = "detailed_info"
+names(dados.num)[8] = "images_better_text"
+names(dados.num)[9] = "organization_speed"
+names(dados.num)[10] = "transaction_security"
+names(dados.num)[3] = "transaction_speed"
+names(dados.num)[12] = "acc_info"
+names(dados.num)[13] = "prod_price_comp"
+names(dados.num)[14] = "effec_shop_cart"
+names(dados.num)[15] = "brand_classif"
+names(dados.num)[16] = "others_opi"
+names(dados.num)[17] = "effec_search_mech"
+names(dados.num)[18] = "megastore_better_especialized"
+names(dados.num)[19] = "personal_info_privacy"
+names(dados.num)[20] = "relutance_credit_card"
+
+colnames(dados.num)
+
+```
+
+
+Médias variáveis BR
+```{r}
+
+dados.num.mean = tibble(colnames(dados.num), round(colMeans(dados.num),2), round(unlist(lapply(dados.num[,], sd)), 2))
+names(dados.num.mean)[1] = "var"
+names(dados.num.mean)[2] = "mediaBR"
+names(dados.num.mean)[3] = "sdBR"
+
+dados.num.mean = dados.num.mean%>% arrange(-mediaBR)
+dados.num.mean
+
+```
+
+
+Adicionar médias variáveis KR
+```{r}
+
+dados.num.mean = dados.num.mean %>% mutate(mediaKR = c(6.12, 6.23, 6.38, 6.40, 5.56, 6.10, 5.59, 5.53, 5.28, 5.02, 3.99, 6.16, 6.02, 5, 4.34, 5.54, 5.04, 5.51, 4.41,3.01))
+
+dados.num.mean = dados.num.mean %>% mutate(sdKR = c(1.30, 1.17, 1.12, 1.06, 1.09, 1.13, 1.15, 1.21, 1.32, 1.51, 1.78, 1.18,1.07, 1.30, 1.44, 1.45, 1.36, 1.36, 1.46, 1.56))
+
+
+
+
+dados.num.mean = dados.num.mean %>% mutate( diff= round(( (mediaBR-mediaKR)/(7-1) )*100,2) )
+
+dados.num.mean = dados.num.mean %>% mutate( tvalor = (mediaBR-mediaKR) /sqrt((sdBR*sdBR/26) + (sdKR*sdKR/205)) )
+
+dados.num.mean = dados.num.mean %>% mutate(pvalor =  1-pt(abs(tvalor),df = pmin(26,205)-1))
+
+dados.num.mean
+```

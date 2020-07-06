@@ -118,7 +118,7 @@ Matriz de correlação para coeficiente de Kendall
 ```{r}
 #trace("chart.Correlation",edit=TRUE)
 
-#chart.Correlation(dados.relev, histogram = TRUE)
+#chart.Correlation(dados.corr.kendall_50, histogram = TRUE)
 paleta <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200)
 
 pdf(file = "kendallCorr.pdf")
