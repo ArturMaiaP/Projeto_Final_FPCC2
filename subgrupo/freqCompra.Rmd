@@ -1,0 +1,116 @@
+---
+title: "subgrupos"
+author: "Artur Maia"
+date: "06/07/2020"
+output: html_document
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+#install.packages("pastecs")
+library(pastecs)
+#source(here::here("5-regressao/speed-dating"))
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+```
+
+```{r}
+dados = read_csv(here::here("data/questOnEcomm.csv"))
+
+glimpse(dados)
+
+head(dados)
+```
+
+
+````{r}
+freq.baixa = dados %>% filter(freq_shop_online == '2-4' | freq_shop_online == '0-1')
+
+freq.baixa = freq.baixa[,-c(1:9,30)]
+
+names(freq.baixa)[1] = "price_negociation"
+names(freq.baixa)[2] = "physical_contact"
+names(freq.baixa)[11] = "site_navigation_speed"
+names(freq.baixa)[4] = "credit_card_pay"
+names(freq.baixa)[5] = "new_product_curiosity"
+names(freq.baixa)[6] = "risk_credit_card"
+names(freq.baixa)[7] = "detailed_info"
+names(freq.baixa)[8] = "images_better_text"
+names(freq.baixa)[9] = "organization_speed"
+names(freq.baixa)[10] = "transaction_security"
+names(freq.baixa)[3] = "transaction_speed"
+names(freq.baixa)[12] = "acc_info"
+names(freq.baixa)[13] = "prod_price_comp"
+names(freq.baixa)[14] = "effec_shop_cart"
+names(freq.baixa)[15] = "brand_classif"
+names(freq.baixa)[16] = "others_opi"
+names(freq.baixa)[17] = "effec_search_mech"
+names(freq.baixa)[18] = "megastore_better_especialized"
+names(freq.baixa)[19] = "personal_info_privacy"
+names(freq.baixa)[20] = "relutance_credit_card"
+
+freq.baixa
+```
+
+```{r}
+
+freq.alta = dados %>% filter(freq_shop_online == '5+')
+
+freq.alta = freq.alta[,-c(1:9,30)]
+
+names(freq.alta)[1] = "price_negociation"
+names(freq.alta)[2] = "physical_contact"
+names(freq.alta)[11] = "site_navigation_speed"
+names(freq.alta)[4] = "credit_card_pay"
+names(freq.alta)[5] = "new_product_curiosity"
+names(freq.alta)[6] = "risk_credit_card"
+names(freq.alta)[7] = "detailed_info"
+names(freq.alta)[8] = "images_better_text"
+names(freq.alta)[9] = "organization_speed"
+names(freq.alta)[10] = "transaction_security"
+names(freq.alta)[3] = "transaction_speed"
+names(freq.alta)[12] = "acc_info"
+names(freq.alta)[13] = "prod_price_comp"
+names(freq.alta)[14] = "effec_shop_cart"
+names(freq.alta)[15] = "brand_classif"
+names(freq.alta)[16] = "others_opi"
+names(freq.alta)[17] = "effec_search_mech"
+names(freq.alta)[18] = "megastore_better_especialized"
+names(freq.alta)[19] = "personal_info_privacy"
+names(freq.alta)[20] = "relutance_credit_card"
+
+freq.alta
+
+```
+
+
+
+```{r}
+
+freq.baixa.mean = tibble(colnames(freq.baixa), round(colMeans(freq.baixa),2))
+names(freq.baixa.mean)[1] = "var"
+names(freq.baixa.mean)[2] = "media"
+
+freq.baixa.mean %>% arrange(var)
+```
+
+
+```{r}
+
+freq.alta.mean = tibble(colnames(freq.alta), round(colMeans(freq.alta),2))
+names(freq.alta.mean)[1] = "var"
+names(freq.alta.mean)[2] = "media"
+
+freq.alta.mean %>% arrange(var)
+```
+
+
+```{r}
+
+t.test(freq.alta$others_opi,freq.baixa$others_opi)
+```

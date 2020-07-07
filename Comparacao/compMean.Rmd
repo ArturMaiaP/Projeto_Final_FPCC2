@@ -30,9 +30,8 @@ glimpse(dados)
 ```{r}
 ncol(dados)
 
-dados.num = dados[,-c(1:9,30)]
 
-names(dados.num)[1] = "price_negociation"
+names(dados)[1] = "price_negociation"
 names(dados.num)[2] = "physical_contact"
 names(dados.num)[11] = "site_navigation_speed"
 names(dados.num)[4] = "credit_card_pay"
@@ -84,7 +83,7 @@ dados.num.mean = dados.num.mean %>% mutate(sdKR = c(1.30, 1.17, 1.12, 1.06, 1.09
 
 dados.num.mean = dados.num.mean %>% mutate( diff= round(( (mediaBR-mediaKR)/(7-1) )*100,2) )
 
-dados.num.mean = dados.num.mean %>% mutate( tvalor = (mediaBR-mediaKR) /sqrt((sdBR*sdBR/26) + (sdKR*sdKR/205)) )
+dados.num.mean = dados.num.mean %>% mutate( tvalor = round((mediaBR-mediaKR) /sqrt((sdBR*sdBR/26) + (sdKR*sdKR/205)) ,2))
 
 dados.num.mean = dados.num.mean %>% mutate(pvalor =  1-pt(abs(tvalor),df = pmin(26,205)-1))
 

@@ -1,0 +1,93 @@
+---
+title: "freq2"
+author: "Artur Maia"
+date: "07/07/2020"
+output: html_document
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+#install.packages("pastecs")
+library(pastecs)
+#source(here::here("5-regressao/speed-dating"))
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+```
+
+```{r}
+dados = read_csv(here::here("data/questOnEcomm.csv"))
+
+glimpse(dados)
+
+head(dados)
+```
+
+```{r}
+
+
+names(dados)[10] = "price_negociation"
+names(dados)[11] = "physical_contact"
+names(dados)[12] = "transaction_speed"
+names(dados)[13] = "credit_card_pay"
+names(dados)[14] = "new_product_curiosity"
+names(dados)[15] = "risk_credit_card"
+names(dados)[16] = "detailed_info"
+names(dados)[17] = "images_better_text"
+names(dados)[18] = "organization_speed"
+names(dados)[19] = "transaction_security"
+names(dados)[20] = "site_navigation_speed"
+names(dados)[21] = "acc_info"
+names(dados)[22] = "prod_price_comp"
+names(dados)[23] = "effec_shop_cart"
+names(dados)[24] = "brand_classif"
+names(dados)[25] = "others_opi"
+names(dados)[26] = "effec_search_mech"
+names(dados)[27] = "megastore_better_especialized"
+names(dados)[28] = "personal_info_privacy"
+names(dados)[29] = "relutance_credit_card"
+
+colnames(dados)
+
+```
+
+
+```{r}
+
+
+for (i in 1:length(dados$freq_shop_online)){
+  if (dados[i,"freq_shop_online"] == '5+') {
+    dados[i,"freq_shop_online"] = "freqAlta"
+  }else{
+    dados[i,"freq_shop_online"] = "freqBaixa"
+  }
+}
+
+dados = dados[,c(7,10:29)]
+glimpse(dados)
+```
+
+
+```{r}
+
+freqTtest = c()
+for (j  in colnames(dados[,2:21])) {
+  freqAlta = dados %>% filter(freq_shop_online=="freqAlta")  %>% pull(j)
+  freqbaixa = dados %>% filter(freq_shop_online=="freqBaixa")  %>% pull(j)
+  
+  t = t.test(freqAlta,freqbaixa)
+  
+  freqTtest = rbind(freqTtest, c(j,t$p.value,mean(freqAlta),mean(freqbaixa)))
+  
+}
+
+data.frame(var = freqTtest[,1], 
+           freq_alta = freqTtest[,3],
+           freq_baixa = freqTtest[,4],
+           pvalor = freqTtest[,2])
+           
+```
